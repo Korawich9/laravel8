@@ -1,6 +1,10 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StaffController;
+use App\Models\Staff;
 
 /*
 |--------------------------------------------------------------------------
@@ -117,3 +121,64 @@ Route::get("/student/component", function () {
 Route::get('/tables', function () {
     return view('tables');
 });
+
+
+
+
+
+
+Route::get('study-question', function () {
+    $questions = json_decode(file_get_contents("https://raw.githubusercontent.com/arc6828/cs/master/json/sci-mbti.json"));    
+    return view("study/question", compact('questions'));
+})->name('study-question');
+
+Route::post('study-match', function (Request $request) {
+    $summary = [ "CS" => 0, "IT" => 0, "DISE" => 0, "HE" => 0, "NU" => 0, "FB" => 0, "SET" => 0, "OHS" => 0 ];
+    $majors = [
+        "CS" => "วิทยาการคอมพิวเตอร์ (CS)",
+        "IT" => "เทคโนโลยีสารสนเทศ (IT)",
+        "DISE" => "นวัตกรรมดิจิทัลและวิศวกรรมซอฟต์แวร์ (DISE)",
+        "HE" => "คหกรรมศาสตร์ (HE)",
+        "NU" => "โภชนาการและการกำหนดอาหาร (NU)",
+        "FB" => "นวัตกรรมอาหารและเครื่องดื่มเพื่อสุขภาพ (FB)",
+        "SET" => "วิทยาศาสตร์และเทคโนโลยีสิ่งแวดล้อม (SET)",
+        "OHS" => "อาชีวอนามัยและความปลอดภัย (OHS)",
+    ];
+    foreach ($_POST as $key => $value) {
+        if(!str_contains($key, "flexRadioDefault")) continue;
+        [$code, $answer] = explode("-", $value);
+        if ($answer == "yes") {            // if-yes
+            $summary[$code] = isset($summary[$code]) ? $summary[$code] + 1 : 1;
+        } else {            // if-no
+            $summary[$code] = isset($summary[$code]) ? $summary[$code] + 0 : 0;
+        }
+    }
+    $codes = array_keys($summary);
+    $values = array_values($summary);
+
+    return view("study/match", compact('codes','values','majors'));
+})->name('study-match');
+
+
+
+
+// Route::get('study-Question', function () {
+// })->name('study-question');
+
+// Route::post('study-match', function (Request $request) {
+// })->name('study-match');
+
+
+Route::get("/product", [ProductController::class, "index"])->name('product.index');
+Route::get("/product/create", [ProductController::class, "create"])->name('product.create');
+Route::post("/product", [ProductController::class, "store"])->name('product.store');
+Route::get('/product/{id}', [ProductController::class, "show"])->name('product.show');
+Route::get("/product/{id}/edit", [ProductController::class, "edit"])->name('product.edit');
+Route::patch("/product/{id}", [ProductController::class, "update"])->name('product.update');
+Route::delete("/product/{id}", [ProductController::class, "destroy"])->name('product.destroy');
+
+// Route::resource('/product', ProductController::class );
+
+Route::resource('/staff', StaffController::class );
+
+
