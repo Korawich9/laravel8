@@ -91,6 +91,8 @@ Route::get("/teacher" , function (){
 	return view("teacher");
 });
 
+
+
 Route::get("/student" , function (){
 	return view("student");
 });
@@ -120,44 +122,43 @@ Route::get("/student/component", function () {
 
 Route::get('/tables', function () {
     return view('tables');
-});
+})->middleware('auth', 'role:admin');
 
 
 
 
 
+// Route::get('study-question', function () {
+//     $questions = json_decode(file_get_contents("https://raw.githubusercontent.com/arc6828/cs/master/json/sci-mbti.json"));    
+//     return view("study/question", compact('questions'));
+// })->name('study-question');
 
-Route::get('study-question', function () {
-    $questions = json_decode(file_get_contents("https://raw.githubusercontent.com/arc6828/cs/master/json/sci-mbti.json"));    
-    return view("study/question", compact('questions'));
-})->name('study-question');
+// Route::post('study-match', function (Request $request) {
+//     $summary = [ "CS" => 0, "IT" => 0, "DISE" => 0, "HE" => 0, "NU" => 0, "FB" => 0, "SET" => 0, "OHS" => 0 ];
+//     $majors = [
+//         "CS" => "วิทยาการคอมพิวเตอร์ (CS)",
+//         "IT" => "เทคโนโลยีสารสนเทศ (IT)",
+//         "DISE" => "นวัตกรรมดิจิทัลและวิศวกรรมซอฟต์แวร์ (DISE)",
+//         "HE" => "คหกรรมศาสตร์ (HE)",
+//         "NU" => "โภชนาการและการกำหนดอาหาร (NU)",
+//         "FB" => "นวัตกรรมอาหารและเครื่องดื่มเพื่อสุขภาพ (FB)",
+//         "SET" => "วิทยาศาสตร์และเทคโนโลยีสิ่งแวดล้อม (SET)",
+//         "OHS" => "อาชีวอนามัยและความปลอดภัย (OHS)",
+//     ];
+//     foreach ($_POST as $key => $value) {
+//         if(!str_contains($key, "flexRadioDefault")) continue;
+//         [$code, $answer] = explode("-", $value);
+//         if ($answer == "yes") {            // if-yes
+//             $summary[$code] = isset($summary[$code]) ? $summary[$code] + 1 : 1;
+//         } else {            // if-no
+//             $summary[$code] = isset($summary[$code]) ? $summary[$code] + 0 : 0;
+//         }
+//     }
+//     $codes = array_keys($summary);
+//     $values = array_values($summary);
 
-Route::post('study-match', function (Request $request) {
-    $summary = [ "CS" => 0, "IT" => 0, "DISE" => 0, "HE" => 0, "NU" => 0, "FB" => 0, "SET" => 0, "OHS" => 0 ];
-    $majors = [
-        "CS" => "วิทยาการคอมพิวเตอร์ (CS)",
-        "IT" => "เทคโนโลยีสารสนเทศ (IT)",
-        "DISE" => "นวัตกรรมดิจิทัลและวิศวกรรมซอฟต์แวร์ (DISE)",
-        "HE" => "คหกรรมศาสตร์ (HE)",
-        "NU" => "โภชนาการและการกำหนดอาหาร (NU)",
-        "FB" => "นวัตกรรมอาหารและเครื่องดื่มเพื่อสุขภาพ (FB)",
-        "SET" => "วิทยาศาสตร์และเทคโนโลยีสิ่งแวดล้อม (SET)",
-        "OHS" => "อาชีวอนามัยและความปลอดภัย (OHS)",
-    ];
-    foreach ($_POST as $key => $value) {
-        if(!str_contains($key, "flexRadioDefault")) continue;
-        [$code, $answer] = explode("-", $value);
-        if ($answer == "yes") {            // if-yes
-            $summary[$code] = isset($summary[$code]) ? $summary[$code] + 1 : 1;
-        } else {            // if-no
-            $summary[$code] = isset($summary[$code]) ? $summary[$code] + 0 : 0;
-        }
-    }
-    $codes = array_keys($summary);
-    $values = array_values($summary);
-
-    return view("study/match", compact('codes','values','majors'));
-})->name('study-match');
+//     return view("study/match", compact('codes','values','majors'));
+// })->name('study-match');
 
 
 
@@ -180,5 +181,19 @@ Route::delete("/product/{id}", [ProductController::class, "destroy"])->name('pro
 // Route::resource('/product', ProductController::class );
 
 Route::resource('/staff', StaffController::class );
+
+//ww8
+Route::get('/dashboard', function () {
+    // if(Auth::user()->role == "admin"){
+	// 	return redirect("product");
+    // }else if(Auth::user()->role == "teacher"){
+	// 	return redirect("teacher");
+    // }
+
+    
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+require __DIR__ . '/auth.php';
 
 
